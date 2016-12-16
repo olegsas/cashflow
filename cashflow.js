@@ -440,7 +440,44 @@ function runWeekly(startDate, finishDate){// global function runs transaction ge
 
 var StudentH = oneDayOfUser();// we take this array;
 
+function makeWallets(AccountA){//AccountA - is an array of accounts
+    var wallets = [];
+    var cycleWallet;
+    var len = AccountA.length;
+    for(var i = 1; i <=len ; i++){
+        cycleWallet = AccountA[i];
+        if(cycleWallet){
+            if(wallets.indexOf(cycleWallet) == -1){// the mistake was to use = instead of == or even ===
+            wallets.push(cycleWallet);
+            }
+        }
+    }
+    for(var j = 0; j<wallets.length; j++){
+        WriteWallet(wallets[j],0);//start amounts = 0
+    }
+}// we make the wallets collection
+
+function makeNames(OperationNameA){//OperationNameA - is an array of operation names
+    var names = [];
+    var cycleName;
+    var len = OperationNameA.length;
+    for(var i = 1; i<=len; i++){
+        cycleName = OperationNameA[i];
+        if(cycleName){
+            if(names.indexOf(cycleName) == -1){
+                names.push(cycleName);
+            }
+        }
+    }
+    for(var j = 0; j<names.length; j++){
+        WriteName(names[j]);
+    }
+}// we make the names collection
+
 function runAll(begin, end){
+    makeWallets(StudentH.Account);// StudentH.AccountA - is the array of the transaction accounts
+    //wallets is the array with single unique wallets
+    makeNames(StudentH.OperationName);
     runYearly(begin, end);
     runMonthly(begin, end);
     runWeekly(begin, end);
@@ -501,40 +538,6 @@ function findFinishData(ratesH){
     }
     return dataA[num];
 }
-
-function makeWallets(AccountA){//AccountA - is an array of accounts
-    var wallets = [];
-    var cycleWallet;
-    var len = AccountA.length;
-    for(var i = 1; i <=len ; i++){
-        cycleWallet = AccountA[i];
-        if(cycleWallet){
-            if(wallets.indexOf(cycleWallet) == -1){// the mistake was to use = instead of == or even ===
-            wallets.push(cycleWallet);
-            }
-        }
-    }
-    for(var j = 0; j<wallets.length; j++){
-        WriteWallet(wallets[j],0);//start amounts = 0
-    }
-}// we make the wallets collection
-
-function makeNames(OperationNameA){//OperationNameA - is an array of operation names
-    var names = [];
-    var cycleName;
-    var len = OperationNameA.length;
-    for(var i = 1; i<=len; i++){
-        cycleName = OperationNameA[i];
-        if(cycleName){
-            if(names.indexOf(cycleName) == -1){
-                names.push(cycleName);
-            }
-        }
-    }
-    for(var j = 0; j<names.length; j++){
-        WriteName(names[j]);
-    }
-}// we make the names collection
 
 function makeTransactionNames(){// we make names for the transaction operations
     var namesH = {
@@ -620,14 +623,13 @@ function makeTransactionNames(){// we make names for the transaction operations
     return namesH;// we return an object with operation names
 }
 
-makeWallets(StudentH.Account);// StudentH.AccountA - is the array of the transaction accounts
-//wallets is the array with single unique wallets
-makeNames(StudentH.OperationName);
-
 var namesH = makeTransactionNames();// namesH is an object with transaction names;
 
-function readTransactions(cycleTimeDay){// it may be many transactions in one day
-
+function readTransactions(nowTimeDay){// it may be many transactions in one day
+    var nowData = new Date();
+    nowData.setTime(nowTimeDay*1000*60*60*24);
+    var nowTransactionA = db.transactions.find({"Date": nowData}).toArray();
+    print("nowTransactionA = "+nowTransactionA);
 }
 
 function applyTransactions(/**/){// we apply the transactions
