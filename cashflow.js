@@ -639,10 +639,36 @@ function applyTransactions(/**/){// we apply the transactions
 function calculateCashDelta(nowTimeDay){
     var nowData = new Date();
     nowData.setTime(nowTimeDay*1000*60*60*24);
+    var i = 1,
+    TypeA = [],
+    OperationNameA = [],
+    AmountA = [],
+    CurrencyA = [],
+    cursor = db.transactions.find({"Date": { $gte: ISODate("2010-01-01T00:00:00.000Z"), $lte: ISODate("2010-01-01T20:00:00.000Z")}}),
+    length;
+    cursor.forEach(
+        function(obj){
+            TypeA[i] = obj.Type;// we find certain field of the certain transaction
+            print("i = "+i);
+            print("TypeA[i] = "+TypeA[i]);
+            print("nowData = "+nowData);
+            OperationNameA[i] = obj.OperationName;
+            AmountA[i] = obj.Amount;
+            CurrencyA[i] = obj.Currency;
+                i++;
+        }
+    );
+    //return TypeA[2];// for the debugging
+
+}
+
+/*function calculateCashDelta(nowTimeDay){
+    var nowData = new Date();
+    nowData.setTime(nowTimeDay*1000*60*60*24);
     var nowTransactionA = db.transactions.find({"Date": nowData}).toArray();
     return nowTransactionA[0].Type;// for the debugging
 
-}
+}*/
 
 function writeCashFlow(nowTimeDay, Byr, Byn, Usd){// we write the cashflow for the nowTimeDay
     var cashData  = new Date();
