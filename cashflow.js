@@ -479,8 +479,8 @@ function runAll(begin, end){
     //wallets is the array with single unique wallets
     makeNames(StudentH.OperationName);
     runYearly(begin, end);
-    runMonthly(begin, end);
-    runWeekly(begin, end);
+    //runMonthly(begin, end);
+    //runWeekly(begin, end);
 }
 
 function dataRates(){
@@ -717,8 +717,8 @@ function runCashFlow(begin, end){// we want to use day from the begining Day 197
     }
 }
 
-//runAll(findStartData(ratesH), findFinishData(ratesH));//start date and final date - in my task 2016
+runAll(findStartData(ratesH), findFinishData(ratesH));//start date and final date - in my task 2016
 
 //runCashFlow(findStartData(ratesH), findFinishData(ratesH));//start CashFlow
 
-print("CalculateCashDelta - " + calculateCashDelta(14610));//for the debug
+//print("CalculateCashDelta - " + calculateCashDelta(14610));//for the debug
