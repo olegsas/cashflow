@@ -636,8 +636,17 @@ function applyTransactions(/**/){// we apply the transactions
 
 }
 
-function writeCashFlow(nowTimeDay, Byr, Byn, Usd){// we write the cashflow for the nowTimeDay
+function calculateCashDelta(cycleTimeDay){
+    var nowData = new Date();
+    nowData.setTime(nowTimeDay*1000*60*60*24);
+    var nowTransactionA = db.transactions.find({"Date": nowData}).toArray();
 
+}
+
+function writeCashFlow(nowTimeDay, Byr, Byn, Usd){// we write the cashflow for the nowTimeDay
+    var cashData  = new Date();
+        cashData.setTime(nowTimeDay*1000*60*60*24);
+        db.cashflow.insert({"Date": cashData, "Byr": Byr, "Byn": Byn, "Usd": Usd});
 }
 
 function calculateCashFlow(startTimeDay, nowTimeDay){
@@ -646,12 +655,22 @@ function calculateCashFlow(startTimeDay, nowTimeDay){
     var Byn = 0;
     var Byr = 0;
     var Usd = 0;
-    for(var cycleTimeDay = startTimeDay; cycleTimeDay<=nowTimeDay; cycleTimeDay++){
+    var cycleTimeDay = startTimeDay;// we calculate it for the first day at start, and then we 
+    //will calculate it from the secind day to the end
+    var cashDeltaA = [];// cashDeltaA[0] = Byr, cashDeltaA[1] = Byn, cashDeltaA[2] = Usd;
+    cashDeltaA = calculateCashDelta(cycleTimeDay);// we calculate cash delta for the certain day
+    // and store it in the array [0] = Byr, [1] = Byn, [2] = Usd
+        Byr = Byr + cashDeltaA[0];
+        Byn = Byn + cashDeltaA[1];
+        Usd = Usd + cashDeltaA[2];
+        writeCashFlow(cycleTimeDay, Byr, Byn, Usd);
+    /*for(var cycleTimeDay = startTimeDay; cycleTimeDay<=nowTimeDay; cycleTimeDay++){
         readTransactions(cycleTimeDay);//returns an array of objects[{},{},{}]
-        applyTransactions(/**/);
-    }
-    writeCashFlow(nowTimeDay, Byr, Byn, Usd);
+        applyTransactions();
+    }*/
+    
     // in Byr, Byn and Usd we have the actual balance for this day
+        
 }
 
 function runCashFlow(begin, end){// we want to use day from the begining Day 1970
@@ -673,4 +692,4 @@ function runCashFlow(begin, end){// we want to use day from the begining Day 197
 
 //runAll(findStartData(ratesH), findFinishData(ratesH));//start date and final date - in my task 2016
 
-runCashFlow(findStartData(ratesH), findFinishData(ratesH));//start CashFlow
+//runCashFlow(findStartData(ratesH), findFinishData(ratesH));//start CashFlow
