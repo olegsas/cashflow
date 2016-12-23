@@ -636,10 +636,11 @@ function applyTransactions(/**/){// we apply the transactions
 
 }
 
-function calculateCashDelta(cycleTimeDay){
+function calculateCashDelta(nowTimeDay){
     var nowData = new Date();
     nowData.setTime(nowTimeDay*1000*60*60*24);
     var nowTransactionA = db.transactions.find({"Date": nowData}).toArray();
+    return nowTransactionA[0].Type;// for the debugging
 
 }
 
@@ -693,3 +694,5 @@ function runCashFlow(begin, end){// we want to use day from the begining Day 197
 //runAll(findStartData(ratesH), findFinishData(ratesH));//start date and final date - in my task 2016
 
 //runCashFlow(findStartData(ratesH), findFinishData(ratesH));//start CashFlow
+
+print("CalculateCashDelta - " + calculateCashDelta(14610));//for the debug
