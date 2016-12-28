@@ -655,9 +655,6 @@ function calculateCashDelta(nowTimeDay){
         cursor.forEach(
             function(obj){
                 TypeA[i] = obj.Type;// we find certain field of the certain transaction
-                print("i = "+i);
-                print("TypeA[i] = "+TypeA[i]);
-                print("nowData = "+nowData);
                 OperationNameA[i] = obj.OperationName;
                 AmountA[i] = obj.Amount;
                 CurrencyA[i] = obj.Currency;
@@ -724,7 +721,6 @@ function runCashFlow(begin, end){// we want to use day from the begining Day 197
     for(var cycleTimeDay = startTimeDay; cycleTimeDay <= finishTimeDay; cycleTimeDay++){
         var cycleData = new Date();
         cycleData.setTime(cycleTimeDay*1000*60*60*24);
-        print("Data is - " + cycleData);
         cashboxA = calculateCashDelta(cycleTimeDay);
         for(var i = 0; i<flowcashboxA.length; i++){// we increment flowcashboxA with values of cashboxA
             flowcashboxA[i] = flowcashboxA[i] + cashboxA[i];
@@ -737,4 +733,3 @@ function runCashFlow(begin, end){// we want to use day from the begining Day 197
 
 runCashFlow(findStartData(ratesH), findFinishData(ratesH));//start CashFlow
 
-//print("CalculateCashDelta - " + calculateCashDelta(14624));//for the debug
