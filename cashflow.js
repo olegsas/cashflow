@@ -262,7 +262,7 @@ function makeYearlyTransactionsUniversal(start_Day, last_Day, Year){
                 // we need to set the time of the date into the 0.00.00 hours
                 transactionTimeDay[j] = Math.floor(transaction_Date[j].getTime()/(1000*60*60*24));// we find a day since zero point
                 transactionNormal_Date[j] = new Date();
-                transactionNormal_Date[j].setTime(transactionTimeDay[j]*1000*60*60*24);// Data object format
+                transactionNormal_Date[j].setTime((transactionTimeDay[j]+1)*1000*60*60*24);// We compensate the 1 day difference
                 print("transaction_Date[j]" + transaction_Date[j] + "transactionNormal_Date[j]" + transactionNormal_Date[j]);
             };
             for(var j=0; j<Rate; j++){
@@ -282,17 +282,17 @@ function makeYearlyTransactionsUniversal(start_Day, last_Day, Year){
 
             for(var j=0; j<Rate; j++){
                 if((StudentH.Currency[i] === "Byn") || (StudentH.Currency[i] === "Byr")){
-                    if((StudentH.Currency[i] === "Byn")&&(transaction_Date[j] >= DATE_OF_DENOMINATION)){
-                       WriteTransaction(transaction_Date[j],transactionType, operationName, transactionNameOnly[j], 
+                    if((StudentH.Currency[i] === "Byn")&&(transactionNormal_Date[j] >= DATE_OF_DENOMINATION)){
+                       WriteTransaction(transactionNormal_Date[j],transactionType, operationName, transactionNameOnly[j], 
                              transactionAmount[j], transactionCurrency, transactionAccount) 
                     };
-                    if((StudentH.Currency[i] === "Byr")&&(transaction_Date[j] < DATE_OF_DENOMINATION)){
-                        WriteTransaction(transaction_Date[j],transactionType, operationName, transactionNameOnly[j], 
+                    if((StudentH.Currency[i] === "Byr")&&(transactionNormal_Date[j] < DATE_OF_DENOMINATION)){
+                        WriteTransaction(transactionNormal_Date[j],transactionType, operationName, transactionNameOnly[j], 
                              transactionAmount[j], transactionCurrency, transactionAccount)
                     }
 
                 }else{
-                    WriteTransaction(transaction_Date[j],transactionType, operationName, transactionNameOnly[j], 
+                    WriteTransaction(transactionNormal_Date[j],transactionType, operationName, transactionNameOnly[j], 
                              transactionAmount[j], transactionCurrency, transactionAccount)
                     // any currency we do not care of the denomination
                 }
