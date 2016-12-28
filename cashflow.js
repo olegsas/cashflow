@@ -717,19 +717,24 @@ function runCashFlow(begin, end){// we want to use day from the begining Day 197
     //finishTimeDay = 17130
     // number of the days is finishTimeDay-startTimeDay+1 = 2521
     var flowcashboxA = []; // flowcashboxA is the global cashbox, it is the cashflow
-    flowcashboxA[0] = 0; flowcashbox[1] = 0; flowcashbox[2] = 0;
+    flowcashboxA[0] = 0; flowcashboxA[1] = 0; flowcashboxA[2] = 0;
     // let cashboxA[0] = Byr, cashboxA[1] = Byn, cashboxA[2] = USD
+    var cashboxA = []; // we store the result of calculateCashDelta in it
 
     for(var cycleTimeDay = startTimeDay; cycleTimeDay <= finishTimeDay; cycleTimeDay++){
         var cycleData = new Date();
         cycleData.setTime(cycleTimeDay*1000*60*60*24);
         print("Data is - " + cycleData);
-        calculateCashFlow(startTimeDay, cycleTimeDay);
+        cashboxA = calculateCashDelta(cycleTimeDay);
+        for(var i = 0; i<flowcashboxA.length; i++){// we increment flowcashboxA with values of cashboxA
+            flowcashboxA[i] = flowcashboxA[i] + cashboxA[i];
+        }// flowcashboxA has an actual amount of money on the cycleTimeDay
+        writeCashFlow(cycleTimeDay, flowcashboxA[0], flowcashboxA[1], flowcashboxA[2]);   
     }
 }
 
 // runAll(findStartData(ratesH), findFinishData(ratesH));//start date and final date - in my task 2016
 
-// runCashFlow(findStartData(ratesH), findFinishData(ratesH));//start CashFlow
+runCashFlow(findStartData(ratesH), findFinishData(ratesH));//start CashFlow
 
-print("CalculateCashDelta - " + calculateCashDelta(14624));//for the debug
+//print("CalculateCashDelta - " + calculateCashDelta(14624));//for the debug
