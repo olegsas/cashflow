@@ -246,7 +246,9 @@ function toPlainDays(anyDate, anyMonth, anyYear){//returns tow many days between
 function makeYearlyTransactionsUniversal(start_Day, last_Day, Year){
     var Rate;// the rate of the period - how many times we make the transaction
     var transaction_Date = [];
+    var transactionTimeDay = [];
     var transactionAmount = [];
+    var transactionNormal_Date = [];
     var Number_of_the_name_of_transaction = [];
     var transactionNameOnly = [];
     for(i=1; i<StudentH.len+1; i++){// we check the transaction list
@@ -258,7 +260,10 @@ function makeYearlyTransactionsUniversal(start_Day, last_Day, Year){
                 transaction_Date[j] = new Date(Year, 0, transactionDays[j]);
                 // we convert it into an object format
                 // we need to set the time of the date into the 0.00.00 hours
-                transaction_Date[j].setHours(0, 0, 0, 0);
+                transactionTimeDay[j] = Math.floor(transaction_Date[j].getTime()/(1000*60*60*24));// we find a day since zero point
+                transactionNormal_Date[j] = new Date();
+                transactionNormal_Date[j].setTime(transactionTimeDay[j]*1000*60*60*24);// Data object format
+                print("transaction_Date[j]" + transaction_Date[j] + "transactionNormal_Date[j]" + transactionNormal_Date[j]);
             };
             for(var j=0; j<Rate; j++){
                 transactionAmount[j] = randomMoney(StudentH.AmountMin[i], StudentH.AmountMax[i]);//returns  amount
@@ -311,6 +316,7 @@ function makeWeeklyTransactionsUniversal(startTimeDay, lastTimeDay){
             for(var j=0; j<Rate; j++){
                 transaction_Date[j] = new Date();
                 transaction_Date[j].setTime(transactionTimeDays[j]*1000*60*60*24);// Data object format
+                print("transaction_Date[j] " + transaction_Date[j]);
                 // we convert it into an object format
             };
             for(var j=0; j<Rate; j++){
@@ -483,8 +489,8 @@ function runAll(begin, end){
     //wallets is the array with single unique wallets
     makeNames(StudentH.OperationName);
     runYearly(begin, end);
-    runMonthly(begin, end);
-    runWeekly(begin, end);
+    //runMonthly(begin, end);
+    //runWeekly(begin, end);
 }
 
 function dataRates(){
