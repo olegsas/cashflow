@@ -116,9 +116,7 @@ function makeMonthlyTransactionsUniversal(start_Day, finish_Day, Month, Year){
                 transaction_Date[j].setDate(transactionDays[j]);
                 // we convert it into an object format
                 // we need to set the time of transactions into the 0.00.00
-                transaction_Date[j].setSeconds(0);
-                transaction_Date[j].setHours(0);
-                transaction_Date[j].setMinutes(0);
+                transaction_Date[j].setHours(0, 0, 0, 0);
             };
             for(var j=0; j<Rate; j++){
                 transactionAmount[j] = randomMoney(StudentH.AmountMin[i], StudentH.AmountMax[i]);//returns  amount
@@ -260,9 +258,7 @@ function makeYearlyTransactionsUniversal(start_Day, last_Day, Year){
                 transaction_Date[j] = new Date(Year, 0, transactionDays[j]);
                 // we convert it into an object format
                 // we need to set the time of the date into the 0.00.00 hours
-                transaction_Date[j].setSeconds(0);
-                transaction_Date[j].setHours(0);
-                transaction_Date[j].setMinutes(0);
+                transaction_Date[j].setHours(0, 0, 0, 0);
             };
             for(var j=0; j<Rate; j++){
                 transactionAmount[j] = randomMoney(StudentH.AmountMin[i], StudentH.AmountMax[i]);//returns  amount
