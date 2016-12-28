@@ -487,8 +487,8 @@ function runAll(begin, end){
     //wallets is the array with single unique wallets
     makeNames(StudentH.OperationName);
     runYearly(begin, end);
-    //runMonthly(begin, end);
-    //runWeekly(begin, end);
+    runMonthly(begin, end);
+    runWeekly(begin, end);
 }
 
 function dataRates(){
