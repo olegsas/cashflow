@@ -101,7 +101,9 @@ return arr;
 function makeMonthlyTransactionsUniversal(start_Day, finish_Day, Month, Year){
     var Rate;// the rate of the period - how many times we make the transaction
     var transaction_Date = [];
+    var transactionTimeDay = [];// for normal time
     var transactionAmount = [];
+    var transactionNormal_Date = []; // for normal time
     var Number_of_the_name_of_transaction = [];
     var transactionNameOnly = [];
     for(i=1; i<StudentH.len+1; i++){// we check the transaction list
@@ -116,7 +118,9 @@ function makeMonthlyTransactionsUniversal(start_Day, finish_Day, Month, Year){
                 transaction_Date[j].setDate(transactionDays[j]);
                 // we convert it into an object format
                 // we need to set the time of transactions into the 0.00.00
-                transaction_Date[j].setHours(0, 0, 0, 0);
+                transactionTimeDay[j] = Math.floor(transaction_Date[j].getTime()/(1000*60*60*24));// we find a day since zero point
+                transactionNormal_Date[j] = new Date();
+                transactionNormal_Date[j].setTime(transactionTimeDay[j]*1000*60*60*24);// We don`t need tocompensate the 1 day difference
             };
             for(var j=0; j<Rate; j++){
                 transactionAmount[j] = randomMoney(StudentH.AmountMin[i], StudentH.AmountMax[i]);//returns  amount
@@ -134,17 +138,17 @@ function makeMonthlyTransactionsUniversal(start_Day, finish_Day, Month, Year){
             var transactionAccount = StudentH.Account[i];
             for(var j=0; j<Rate; j++){
                 if((StudentH.Currency[i] === "Byn") || (StudentH.Currency[i] === "Byr")){
-                    if((StudentH.Currency[i] === "Byn")&&(transaction_Date[j] >= DATE_OF_DENOMINATION)){
-                       WriteTransaction(transaction_Date[j],transactionType, operationName, transactionNameOnly[j], 
+                    if((StudentH.Currency[i] === "Byn")&&(transactionNormal_Date[j] >= DATE_OF_DENOMINATION)){
+                       WriteTransaction(transactionNormal_Date[j],transactionType, operationName, transactionNameOnly[j], 
                              transactionAmount[j], transactionCurrency, transactionAccount) 
                     };
-                    if((StudentH.Currency[i] === "Byr")&&(transaction_Date[j] < DATE_OF_DENOMINATION)){
-                        WriteTransaction(transaction_Date[j],transactionType, operationName, transactionNameOnly[j], 
+                    if((StudentH.Currency[i] === "Byr")&&(transactionNormal_Date[j] < DATE_OF_DENOMINATION)){
+                        WriteTransaction(transactionNormal_Date[j],transactionType, operationName, transactionNameOnly[j], 
                              transactionAmount[j], transactionCurrency, transactionAccount)
                     }
 
                 }else{
-                    WriteTransaction(transaction_Date[j],transactionType, operationName, transactionNameOnly[j], 
+                    WriteTransaction(transactionNormal_Date[j],transactionType, operationName, transactionNameOnly[j], 
                              transactionAmount[j], transactionCurrency, transactionAccount)
                     // any currency we do not care of the denomination
                 }
@@ -263,7 +267,6 @@ function makeYearlyTransactionsUniversal(start_Day, last_Day, Year){
                 transactionTimeDay[j] = Math.floor(transaction_Date[j].getTime()/(1000*60*60*24));// we find a day since zero point
                 transactionNormal_Date[j] = new Date();
                 transactionNormal_Date[j].setTime((transactionTimeDay[j]+1)*1000*60*60*24);// We compensate the 1 day difference
-                print("transaction_Date[j]" + transaction_Date[j] + "transactionNormal_Date[j]" + transactionNormal_Date[j]);
             };
             for(var j=0; j<Rate; j++){
                 transactionAmount[j] = randomMoney(StudentH.AmountMin[i], StudentH.AmountMax[i]);//returns  amount
@@ -316,7 +319,6 @@ function makeWeeklyTransactionsUniversal(startTimeDay, lastTimeDay){
             for(var j=0; j<Rate; j++){
                 transaction_Date[j] = new Date();
                 transaction_Date[j].setTime(transactionTimeDays[j]*1000*60*60*24);// Data object format
-                print("transaction_Date[j] " + transaction_Date[j]);
                 // we convert it into an object format
             };
             for(var j=0; j<Rate; j++){
@@ -489,8 +491,8 @@ function runAll(begin, end){
     //wallets is the array with single unique wallets
     makeNames(StudentH.OperationName);
     runYearly(begin, end);
-    //runMonthly(begin, end);
-    //runWeekly(begin, end);
+    runMonthly(begin, end);
+    runWeekly(begin, end);
 }
 
 function dataRates(){
@@ -504,7 +506,6 @@ function dataRates(){
         standartDateA[i] = standartDate(dataA[i]);
 
     }
-    //print("rateA[0] = "+rateA[0]);
 
     ratesH.data = dataA;
     //ratesH.rate = rateA;
