@@ -636,50 +636,69 @@ function makeTransactionNames(){// we make names for the transaction operations
 
 var namesH = makeTransactionNames();// namesH is an object with transaction names;
 
-function readTransactions(nowTimeDay){// it may be many transactions in one day
-    var nowData = new Date();
-    nowData.setTime(nowTimeDay*1000*60*60*24);
-    var nowTransactionA = db.transactions.find({"Date": nowData}).toArray();
-    print("nowTransactionA = "+nowTransactionA);
-}
-
-function applyTransactions(/**/){// we apply the transactions
-
-}
 
 function calculateCashDelta(nowTimeDay){
+    // cashbox is a result of the daily transactions
+    // let cashboxA = [];
+    // let cashboxA[0] = Byr, cashboxA[1] = Byn, cashboxA[2] = USD
     var nowData = new Date();
     nowData.setTime(nowTimeDay*1000*60*60*24);
-    var i = 1,
+    var cashboxA = [];//0 - Byr, 1 - Byn, 2 - USD
+    cashboxA[0] = 0; cashboxA[1] = 0; cashboxA[2] = 0;
+    var i = 0,
     TypeA = [],
     OperationNameA = [],
     AmountA = [],
     CurrencyA = [],
-    cursor = db.transactions.find({"Date": { $gte: ISODate("2010-01-01T00:00:00.000Z"), $lte: ISODate("2010-01-01T20:00:00.000Z")}}),
+    cursor = db.transactions.find({"Date": nowData}),
     length;
-    cursor.forEach(
-        function(obj){
-            TypeA[i] = obj.Type;// we find certain field of the certain transaction
-            print("i = "+i);
-            print("TypeA[i] = "+TypeA[i]);
-            print("nowData = "+nowData);
-            OperationNameA[i] = obj.OperationName;
-            AmountA[i] = obj.Amount;
-            CurrencyA[i] = obj.Currency;
+        cursor.forEach(
+            function(obj){
+                TypeA[i] = obj.Type;// we find certain field of the certain transaction
+                print("i = "+i);
+                print("TypeA[i] = "+TypeA[i]);
+                print("nowData = "+nowData);
+                OperationNameA[i] = obj.OperationName;
+                AmountA[i] = obj.Amount;
+                CurrencyA[i] = obj.Currency;
                 i++;
-        }
-    );
-    //return TypeA[2];// for the debugging
+            }
+        );
+        length = TypeA.length;
+        if(length>0){
+            for(var j = 0; j<length; j++){
+                switch(CurrencyA[j]){
+                    case "Byr":
+                        if(TypeA[j] === "Exp"){
+                            cashboxA[0] = cashboxA[0] - AmountA[j];
+                        }
+                        else{
+                            cashboxA[0] = cashboxA[0] + AmountA[j];
+                        };
+                        break;
+                    case "Byn":
+                        if(TypeA[j] === "Exp"){
+                            cashboxA[1] = cashboxA[1] - AmountA[j];
+                        }
+                        else{
+                            cashboxA[1] = cashboxA[1] + AmountA[j];
+                        };
+                        break;
+                    case "Usd":
+                       if(TypeA[j] === "Exp"){
+                            cashboxA[2] = cashboxA[2] - AmountA[j];
+                        }
+                        else{
+                            cashboxA[2] = cashboxA[2] + AmountA[j];
+                        }; 
+                }
+            }
 
+        }
+        return cashboxA;
 }
 
-/*function calculateCashDelta(nowTimeDay){
-    var nowData = new Date();
-    nowData.setTime(nowTimeDay*1000*60*60*24);
-    var nowTransactionA = db.transactions.find({"Date": nowData}).toArray();
-    return nowTransactionA[0].Type;// for the debugging
 
-}*/
 
 function writeCashFlow(nowTimeDay, Byr, Byn, Usd){// we write the cashflow for the nowTimeDay
     var cashData  = new Date();
@@ -687,29 +706,6 @@ function writeCashFlow(nowTimeDay, Byr, Byn, Usd){// we write the cashflow for t
         db.cashflow.insert({"Date": cashData, "Byr": Byr, "Byn": Byn, "Usd": Usd});
 }
 
-function calculateCashFlow(startTimeDay, nowTimeDay){
-// we calculate the cashflow from the startTimeDay to the nowTimeDay
-    // we can use byr, byn, usd
-    var Byn = 0;
-    var Byr = 0;
-    var Usd = 0;
-    var cycleTimeDay = startTimeDay;// we calculate it for the first day at start, and then we 
-    //will calculate it from the secind day to the end
-    var cashDeltaA = [];// cashDeltaA[0] = Byr, cashDeltaA[1] = Byn, cashDeltaA[2] = Usd;
-    cashDeltaA = calculateCashDelta(cycleTimeDay);// we calculate cash delta for the certain day
-    // and store it in the array [0] = Byr, [1] = Byn, [2] = Usd
-        Byr = Byr + cashDeltaA[0];
-        Byn = Byn + cashDeltaA[1];
-        Usd = Usd + cashDeltaA[2];
-        writeCashFlow(cycleTimeDay, Byr, Byn, Usd);
-    /*for(var cycleTimeDay = startTimeDay; cycleTimeDay<=nowTimeDay; cycleTimeDay++){
-        readTransactions(cycleTimeDay);//returns an array of objects[{},{},{}]
-        applyTransactions();
-    }*/
-    
-    // in Byr, Byn and Usd we have the actual balance for this day
-        
-}
 
 function runCashFlow(begin, end){// we want to use day from the begining Day 1970
     //ratesH is in a string format
@@ -720,6 +716,10 @@ function runCashFlow(begin, end){// we want to use day from the begining Day 197
     //startTimeDay = 14610
     //finishTimeDay = 17130
     // number of the days is finishTimeDay-startTimeDay+1 = 2521
+    var flowcashboxA = []; // flowcashboxA is the global cashbox, it is the cashflow
+    flowcashboxA[0] = 0; flowcashbox[1] = 0; flowcashbox[2] = 0;
+    // let cashboxA[0] = Byr, cashboxA[1] = Byn, cashboxA[2] = USD
+
     for(var cycleTimeDay = startTimeDay; cycleTimeDay <= finishTimeDay; cycleTimeDay++){
         var cycleData = new Date();
         cycleData.setTime(cycleTimeDay*1000*60*60*24);
@@ -728,8 +728,8 @@ function runCashFlow(begin, end){// we want to use day from the begining Day 197
     }
 }
 
-runAll(findStartData(ratesH), findFinishData(ratesH));//start date and final date - in my task 2016
+// runAll(findStartData(ratesH), findFinishData(ratesH));//start date and final date - in my task 2016
 
-//runCashFlow(findStartData(ratesH), findFinishData(ratesH));//start CashFlow
+// runCashFlow(findStartData(ratesH), findFinishData(ratesH));//start CashFlow
 
-//print("CalculateCashDelta - " + calculateCashDelta(14610));//for the debug
+print("CalculateCashDelta - " + calculateCashDelta(14624));//for the debug
