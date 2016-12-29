@@ -155,4 +155,6 @@ function runCashFlow(begin, end){// we want to use day from the begining Day 197
     }
 }
 
+db.cashflow.remove({});
+
 runCashFlow(findStartData(ratesH), findFinishData(ratesH));//start CashFlow
